@@ -237,14 +237,24 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     }
 
   return (
-    <div className='newGroupForm fixed overflow-auto top-[15%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10'>
-        <nav className='w-full bg-slate-500 p-3 fixed top-0'>
+    <div className='newGroupForm fixed overflow-auto top-[15%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden'>
+        <style>
+            {`
+                .scroll-hidden {
+                    scrollbar-width: none; /* For Firefox */
+                }
+                .scroll-hidden::-webkit-scrollbar {
+                    display: none; /* For Chrome, Safari, and Opera */
+                }
+            `}
+        </style>
+        <nav className='w-full bg-slate-500 p-3 sticky top-0'>
             <ul className='flex justify-between'>
                 <li className='cursor-pointer' onClick={handleStatementHidden}>Add</li>
                 <li className='cursor-pointer' onClick={handleStatementActive}>Statement</li>
             </ul>
         </nav>
-        <form action="" className='p-4 my-6 mx-4 h-24 w-96' style={{ display: !statementActive ? 'block' : 'none' }}>
+        <form action="" className='p-4 mx-4 h-24 w-96' style={{ display: !statementActive ? 'block' : 'none' }}>
             <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={currentSelectedGroupName} disabled/>
             <input className="w-full p-3 mt-2" type="text" placeholder='Enter note' value={note} onChange={(e) => setNote(e.target.value)}/>
             <input className="w-full p-3 mt-2" type="number" placeholder='Enter amount' value={amount} onChange={(e) => setAmount(e.target.value)}/>
@@ -306,7 +316,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
 
         </form>
         <div className='h-24 w-96' style={{ display: statementActive ? 'block' : 'none' }}>
-            <h3 className='mt-16 p-4 text-2xl'>Statements:</h3>
+            <h3 className='mt-4 p-4 text-2xl'>Statements:</h3>
             <div className='w-full flex flex-col items-center'>
             {completeData.transactions && 
                 completeData.transactions.map((trans, index) => (

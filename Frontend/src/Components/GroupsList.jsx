@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react"
 import UpdateGroup from "./UpdateGroup";
+import ViewGroup from "./ViewGroup";
 
 const GroupsList = () => {    
     const [groupName, setGroupName] = useState([]);
     const [isUpdateGroupVisible, setIsUpdateGroupVisible] = useState(false);
     const [currentSelectedGroupName, setCurrentSelectedGroupName] = useState(null);
     const [clicked, setClicked] = useState(false);
+    const [toggleGroupViewVisibility, setToggleGroupViewVisibility] = useState(false);
 
     const fetchData  = async() => {
         let response = await fetch("https://youbettersplit.onrender.com/fetchGroupDetails");
@@ -18,6 +20,14 @@ const GroupsList = () => {
     useEffect(() => {
         fetchData();
     }, [isUpdateGroupVisible])
+
+    function viewGroup(){
+        setToggleGroupViewVisibility(true);
+    }
+
+    function closeViewGroup(){
+        setToggleGroupViewVisibility(false);
+    }
 
     function openUpdateGroup(e){
         setCurrentSelectedGroupName(e.target.parentElement.name)
@@ -51,6 +61,7 @@ const GroupsList = () => {
                 <div className="border-2 bg-sky-300 w-full p-10 flex justify-between mt-2" key={index}>
                 <h2 className="text-2xl">{name}</h2>
                 <div>
+                <button className="mr-3" onClick={viewGroup}><i className="fa-solid fa-eye"></i></button>
                 <button name={name} onClick={(e) => openUpdateGroup(e)}><i className="mx-3 fa-solid fa-pen-to-square"></i></button>
                 <button name={name} onClick={(e) => deleteGroup(e)}><i className="mx-3 fa-solid fa-trash"></i></button>
                 </div>
@@ -58,6 +69,9 @@ const GroupsList = () => {
             ))}
             <div  className="">
             {isUpdateGroupVisible && <UpdateGroup onClose={closeUpdateGroup} currentSelectedGroupName={currentSelectedGroupName}/>}
+            </div>
+            <div  className="">
+            {toggleGroupViewVisibility && <ViewGroup onClose={closeViewGroup} currentSelectedGroupName={currentSelectedGroupName}/>}
             </div>
         </div>
     )
