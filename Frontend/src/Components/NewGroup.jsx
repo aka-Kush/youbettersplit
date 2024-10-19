@@ -29,7 +29,7 @@ const NewGroup = ({onClose}) => {
     })
 
 
-    fetch('https://youbettersplit-backend.onrender.com/new-group', {
+    fetch('https://youbettersplit-backend.vercel.app/new-group', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

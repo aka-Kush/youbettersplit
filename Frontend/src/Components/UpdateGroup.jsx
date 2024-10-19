@@ -16,7 +16,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
 
     useEffect(() => {
         const fetchData = async() => {
-            const data = await fetch("https://youbettersplit-backend.onrender.com/fetchExistingData", {
+            const data = await fetch("https://youbettersplit-backend.vercel.app/fetchExistingData", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -74,7 +74,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     };
 
     const finalPost = async(data) => {
-        const response = await fetch("https://youbettersplit-backend.onrender.com/updateGroup", {
+        const response = await fetch("https://youbettersplit-backend.vercel.app/updateGroup", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
