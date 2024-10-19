@@ -313,7 +313,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                                 <li className='list-none p-0 m-0' key={item}>{item}:<span className='text-green-700'>{totalStatement[item]}</span></li>
                             ))}
                         </div>
-                        <i className="fa-solid fa-trash" onClick={() => deleteTransaction(trans.note, trans.split, trans.paidBy)}></i>
+                        <i className="fa-solid fa-trash cursor-pointer" onClick={() => deleteTransaction(trans.note, trans.split, trans.paidBy)}></i>
                     </div>
                 ))
             }

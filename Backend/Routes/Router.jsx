@@ -48,12 +48,10 @@ router.post("/deleteTransaction", async(req, res) => {
     const {note} = req.body;
     try{
         const {groupName} = await Group.findOne({ 'transactions.note': note });
-        console.log(groupName);
-        res.json({groupName: groupName})
-        // await Group.deleteOne({groupName});
-        // res.json({note: note, groupName: groupName});
+        await Group.deleteOne({groupName});
+        res.json({delete: true});
     } catch(e){
-        res.json({error: e});
+        res.json({delete: false, error: e});
     }
 })
 
