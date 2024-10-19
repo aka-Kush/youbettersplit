@@ -8,7 +8,7 @@ const GroupsList = () => {
 
     useEffect(() => {
         const fetchData  = async() => {
-            let response = await fetch("http://localhost:8080/fetchGroupDetails");
+            let response = await fetch("https://youbettersplit-backend.onrender.com/fetchGroupDetails");
             let res = await response.json();
             if(res && Array.isArray(res.data)){
                 setGroupName(res.data.map(g => g.groupName));

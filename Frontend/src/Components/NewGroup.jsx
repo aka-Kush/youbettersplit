@@ -31,7 +31,7 @@ const NewGroup = ({onClose}) => {
     })
 
 
-    fetch('http://localhost:8080/new-group', {
+    fetch('https://youbettersplit-backend.onrender.com/new-group', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
