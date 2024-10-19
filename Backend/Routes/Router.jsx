@@ -2,13 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Group = require("../Schemas/Group.jsx")
 
-router.get("/", async(res, req) => {
-    res.send("Hello");
-})
-
 router.post("/new-group", async(req, res) => {
     const {groupName, members, balances} = await req.body;
-    // console.log(balances)
     const group = new Group({
         groupName,
         members,
@@ -26,9 +21,7 @@ router.get("/fetchGroupDetails", async (req, res) => {
 
 router.post("/fetchExistingData", async (req, res) => {
     const {groupName} = req.body;
-    // console.log(groupName)
     const data = await Group.findOne({groupName});
-    // console.log(data);
     res.json({ data });
 });
 
@@ -44,15 +37,25 @@ router.post("/updateGroup", async(req, res) => {
             members,
             balances
         },
-        // $push:{
-        //     transactions: { $each: transactions }
-        // }
         $push:{
             transactions: transactions
         }
     })
     res.json({grp});
 })
+
+// router.post("/deleteTransaction", async(req, res) => {
+//     const {note} = req.body;
+//     try{
+//         console.log("note: ", note)
+//         const {groupName} = await Group.findOne({transaction: {note: note}});
+//         console.log("groupName: ", groupName)
+//         await Group.deleteOne({groupName});
+//         res.json({note: note, groupName: groupName});
+//     } catch(e){
+//         res.json({error: e});
+//     }
+// })
 
 
 module.exports = router
