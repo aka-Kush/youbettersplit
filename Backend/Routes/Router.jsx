@@ -68,5 +68,15 @@ router.post("/deleteTransaction", async(req, res) => {
     }
 })
 
+router.post("/deleteGroup", async(req, res) => {
+    const {groupName} = await req.body;
+    try{
+        await Group.deleteOne({groupName});
+        res.json({delete: success})
+    } catch(e){
+        res.json({delete: failed, error: e})
+    }
+})
+
 
 module.exports = router
