@@ -16,7 +16,7 @@ const GroupsList = () => {
 
     useEffect(() => {
         fetchData();
-    }, [])
+    }, [isUpdateGroupVisible])
 
     function openUpdateGroup(e){
         setCurrentSelectedGroupName(e.target.parentElement.name)
@@ -31,8 +31,8 @@ const GroupsList = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({groupName})
-            })
-        fetchData();
+            }).then(fetchData())
+        // fetchData();
     }
 
     function closeUpdateGroup(){
