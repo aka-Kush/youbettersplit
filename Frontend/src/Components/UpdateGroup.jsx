@@ -220,14 +220,14 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         
 
   return (
-    <div className='newGroupForm fixed top-[25%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10'>
+    <div className='newGroupForm fixed overflow-auto top-[15%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10'>
         <nav className='w-full bg-slate-500 p-3 fixed top-0'>
             <ul className='flex justify-between'>
                 <li className='cursor-pointer' onClick={handleStatementHidden}>Add</li>
                 <li className='cursor-pointer' onClick={handleStatementActive}>Statement</li>
             </ul>
         </nav>
-        <form action="" className='p-4 my-6 mx-4' style={{ display: !statementActive ? 'block' : 'none' }}>
+        <form action="" className='p-4 my-6 mx-4 h-24' style={{ display: !statementActive ? 'block' : 'none' }}>
             {/* onChange={(e) => setGroupName(e.target.value)} */}
             <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={currentSelectedGroupName} disabled/>
             <input className="w-full p-3 mt-2" type="text" placeholder='Enter note' value={note} onChange={(e) => setNote(e.target.value)}/>
@@ -285,17 +285,22 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
 
             <br />
             
+            <div className='pb-10 w-full flex justify-between'>
             <button  className="border-2 bg-blue-400 p-4 mt-2" type='submit' onClick={(e) => handleSubmit(e)}>Submit</button>
             <button  className='border-2 bg-red-400 p-4 mt-2' type='submit' onClick={onClose}>Close</button>
+            </div>
+
         </form>
-        <div className='h-16 w-16' style={{ display: statementActive ? 'block' : 'none' }}>
+        <div className='' style={{ display: statementActive ? 'block' : 'none' }}>
             <h3 className='mt-16 p-4 text-2xl'>Statements:</h3>
             <ul id="statements-list">
                 {Object.keys(totalStatement).map(item => (
                     <li className='pl-8 py-2 font-bold text-xl' key={item}>{item}:<span className='ml-2 text-green-700 text-xl'>{totalStatement[item]}</span></li>
                 ))}
             </ul>
-            <button className='border-2 bg-red-400 p-4 mt-2' onClick={onClose}>Close</button>
+            <div className='w-full flex justify-center mt-6'>
+                <button className='bg-red-400 p-4 mt-2' onClick={onClose}>Close</button>
+            </div>
         </div>
     </div>
   )
