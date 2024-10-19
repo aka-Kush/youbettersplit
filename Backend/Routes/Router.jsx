@@ -44,18 +44,18 @@ router.post("/updateGroup", async(req, res) => {
     res.json({grp});
 })
 
-// router.post("/deleteTransaction", async(req, res) => {
-//     const {note} = req.body;
-//     try{
-//         console.log("note: ", note)
-//         const {groupName} = await Group.findOne({transaction: {note: note}});
-//         console.log("groupName: ", groupName)
-//         await Group.deleteOne({groupName});
-//         res.json({note: note, groupName: groupName});
-//     } catch(e){
-//         res.json({error: e});
-//     }
-// })
+router.post("/deleteTransaction", async(req, res) => {
+    const {note} = req.body;
+    try{
+        const {groupName} = await Group.findOne({ 'transactions.note': note });
+        console.log(groupName);
+        res.json({groupName: groupName})
+        // await Group.deleteOne({groupName});
+        // res.json({note: note, groupName: groupName});
+    } catch(e){
+        res.json({error: e});
+    }
+})
 
 
 module.exports = router
