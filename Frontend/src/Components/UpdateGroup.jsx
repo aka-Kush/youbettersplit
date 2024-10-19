@@ -71,7 +71,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         }));
     };
 
-    const deleteTransaction = async(id, split, paidBy) => {
+    const deleteTransaction = async(note, split, paidBy, amount) => {
         Object.keys(split).forEach(s => {
             map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 
         })
@@ -80,7 +80,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({id})
+            body: JSON.stringify({note, split, paidBy, amount})
         });
     }
 
@@ -319,7 +319,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                                 <li className='list-none p-0 m-0' key={idx}>{item}:<span className='text-green-700 ml-2'>{trans.split[item]}</span></li>
                             ))}
                         </div>
-                        <i className="fa-solid fa-trash cursor-pointer" onClick={() => deleteTransaction(trans._id, trans.split, trans.paidBy)}></i>
+                        <i className="fa-solid fa-trash cursor-pointer" onClick={() => deleteTransaction(trans.note, trans.split, trans.paidBy, trans.amount)}></i>
                     </div>
                 ))
             }
