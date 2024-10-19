@@ -2,6 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Group = require("../Schemas/Group.jsx")
 
+router.get("/", async(res, req) => {
+    res.send("Hello");
+})
+
 router.post("/new-group", async(req, res) => {
     const {groupName, members, balances} = await req.body;
     // console.log(balances)
