@@ -5,6 +5,7 @@ const GroupsList = () => {
     const [groupName, setGroupName] = useState([]);
     const [isUpdateGroupVisible, setIsUpdateGroupVisible] = useState(false);
     const [currentSelectedGroupName, setCurrentSelectedGroupName] = useState(null);
+    const [clicked, setClicked] = useState(false);
 
     const fetchData  = async() => {
         let response = await fetch("https://youbettersplit.onrender.com/fetchGroupDetails");
@@ -23,6 +24,11 @@ const GroupsList = () => {
         setIsUpdateGroupVisible(true);
     }
 
+    function handleReload(){
+        fetchData();
+        setClicked(prev => !prev);
+    }
+
     const deleteGroup = async(e) => {
         const groupName = e.target.parentElement.name;
             await fetch("https://youbettersplit.onrender.com/deleteGroup",{
@@ -31,8 +37,8 @@ const GroupsList = () => {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({groupName})
-            }).then(fetchData())
-        // fetchData();
+            })
+        handleReload();
     }
 
     function closeUpdateGroup(){
@@ -40,7 +46,7 @@ const GroupsList = () => {
     }
 
     return(
-        <div className="">
+        <div className="" onClick={handleReload} >
             {groupName.map((name, index) => (
                 <div className="border-2 bg-sky-300 w-full p-10 flex justify-between mt-2" key={index}>
                 <h2 className="text-2xl">{name}</h2>
