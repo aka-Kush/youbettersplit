@@ -17,9 +17,7 @@ const NewGroup = ({onClose}) => {
       let name = document.getElementById(`nameInput${i}`).value;
       members.push(name);
     }
-
-    console.log(members);
-
+    
     let balances = {};
     members.forEach(name => {
       balances[name] = {};
