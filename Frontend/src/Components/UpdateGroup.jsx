@@ -82,6 +82,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             },
             body: JSON.stringify({note, split, paidBy, amount})
         });
+        fetchData();
     }
 
     const updateMap = (paidBy, split) => {
