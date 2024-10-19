@@ -50,10 +50,9 @@ router.post("/deleteTransaction", async(req, res) => {
     console.log("id", id)
     try{
         const group = await Group.findOne({ 'transactions._id': objectId });
-        console.log(group)
         await Group.updateOne(
-            { _id: group._id },
-            { $pull: { transactions: { _id: objectId } } }
+            { groupName: group.groupName },
+            { $pullAll: { transactions: [{ _id: objectId }] } }
         );
         res.json({delete: true});
     } catch(e){
