@@ -15,31 +15,37 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     const [totalStatement, setTotalStatement] = useState({});    
     const [completeData, setCompleteData] = useState({});    
 
-    useEffect(() => {
-        const fetchData = async() => {
-            const data = await fetch("https://youbettersplit.onrender.com/fetchExistingData", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({groupName: currentSelectedGroupName})
-            });
-            const res = await data.json();
-            if (res.data) {
-                res.data.members.forEach(member => setNames(prev => [...prev, member]));
-                setMap(res.data.balances);
-                setCompleteData(res.data);
-            }
+
+    const fetchData = async() => {
+        const data = await fetch("https://youbettersplit.onrender.com/fetchExistingData", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({groupName: currentSelectedGroupName})
+        });
+        const res = await data.json();
+        if (res.data) {
+            const n = [];
+            res.data.members.forEach(member => n.push(member));
+            setNames(n);
+            setMap(res.data.balances);
+            setCompleteData(res.data);
         }
+    }
+
+    useEffect(() => {
         fetchData();
-    },[currentSelectedGroupName])
+    },[])
 
     const handleStatementActive = () => {
+        fetchData();
         setStatementActive(true);  
         processStatements();
     }
 
     const handleStatementHidden = () => {
+        fetchData();
         setStatementActive(false);
     }
 
@@ -89,7 +95,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     };
 
     const finalPost = async(data) => {
-        const response = await fetch("https://youbettersplit.onrender.com/updateGroup", {
+        await fetch("https://youbettersplit.onrender.com/updateGroup", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
