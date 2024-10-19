@@ -70,7 +70,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 
         })
         await fetch("https://youbettersplit.onrender.com/deleteTransaction", {
-            method: 'POST',
+            method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
