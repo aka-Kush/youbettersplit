@@ -107,11 +107,13 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         switch(selectedOption){
             case "equally": {
                 const splitAmount = amount/names.length;
+                console.log("splitAmount: ", splitAmount);
                 const splitMemberArr = names.filter(e => e != `${paidBy}`);
                 const split = {};
                 splitMemberArr.forEach((member) => {
                     split[member] = splitAmount;
                 })
+                console.log("split: ", split)
                 updateMap(paidBy, split);
                 const data = {
                     groupName: currentSelectedGroupName,
