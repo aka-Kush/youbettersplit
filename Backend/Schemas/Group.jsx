@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 
 const transactionSchema = new mongoose.Schema({
+    _id: { type: mongoose.Schema.Types.ObjectId, required: true, auto: true },
     note: String,
     paidBy: String,
     amount: Number,

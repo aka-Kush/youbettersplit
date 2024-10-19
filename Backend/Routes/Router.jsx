@@ -45,10 +45,16 @@ router.post("/updateGroup", async(req, res) => {
 })
 
 router.post("/deleteTransaction", async(req, res) => {
-    const {note} = req.body;
+    const {id} = req.body;
+    const objectId = mongoose.Types.ObjectId(id);
+    console.log("id", id)
     try{
-        const {groupName} = await Group.findOne({ 'transactions.note': note });
-        await Group.deleteOne({groupName});
+        const group = await Group.findOne({ 'transactions._id': objectId });
+        console.log(group)
+        await Group.updateOne(
+            { _id: group._id },
+            { $pull: { transactions: { _id: objectId } } }
+        );
         res.json({delete: true});
     } catch(e){
         res.json({delete: false, error: e});

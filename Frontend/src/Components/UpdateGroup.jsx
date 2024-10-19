@@ -47,7 +47,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     const handleSelectedSplitUsersChange = (name) => {
         setSelectedSplitUsers((prev) => ({
             ...prev,
-            [name]: !prev[name], // Toggle the checked state
+            [name]: !prev[name],
         }));
     };
 
@@ -65,7 +65,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         }));
     };
 
-    const deleteTransaction = async(note, split, paidBy) => {
+    const deleteTransaction = async(id, split, paidBy) => {
         Object.keys(split).forEach(s => {
             map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 
         })
@@ -74,7 +74,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({note})
+            body: JSON.stringify({id})
         });
     }
 
@@ -82,7 +82,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         Object.keys(map).forEach(key => {
             if(key == paidBy){
                 Object.keys(map[key]).forEach(s => {
-                    map[key][s] += split[s];
+                    map[key][s] = Math.round(map[key][s] + split[s]);
                 }) 
             }
         }) 
@@ -309,11 +309,11 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                             <span>{trans.paidBy}</span>
                         </div>
                         <div>
-                            {Object.keys(totalStatement).map(item => (
-                                <li className='list-none p-0 m-0' key={item}>{item}:<span className='text-green-700'>{totalStatement[item]}</span></li>
+                            {Object.keys(trans.split).map((item, idx) => (
+                                <li className='list-none p-0 m-0' key={idx}>{item}:<span className='text-green-700 ml-2'>{trans.split[item]}</span></li>
                             ))}
                         </div>
-                        <i className="fa-solid fa-trash cursor-pointer" onClick={() => deleteTransaction(trans.note, trans.split, trans.paidBy)}></i>
+                        <i className="fa-solid fa-trash cursor-pointer" onClick={() => deleteTransaction(trans._id, trans.split, trans.paidBy)}></i>
                     </div>
                 ))
             }
