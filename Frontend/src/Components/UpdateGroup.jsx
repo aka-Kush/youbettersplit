@@ -88,18 +88,14 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         let total = {};
         let filterNames = names.filter(key => key != user)
         filterNames.forEach(name => total[name] = 0);
-        // console.log(total);
         Object.keys(map).forEach(outer => {
             if(outer == user){
                 Object.keys(map[outer]).forEach(key => {
-                    total[key] += map[outer][key];
+                    total[key]  = Math.round(total[key] + map[outer][key]);
                 })
             } else{
-                // Object.keys(outer).forEach(inner => {
-                //     if(inner == user) total[outer] -= map[outer][inner];
-                // })
                 if (map[outer][user]) {
-                    total[outer] -= map[outer][user];
+                    total[outer] = Math.round(total[outer] - map[outer][user]);
                 }
             }
         })
@@ -213,6 +209,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                 break;
             }
         }
+        onClose();
     }
 
         
