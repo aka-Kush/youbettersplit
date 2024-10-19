@@ -14,11 +14,7 @@
     "routes": [
         {
             "src": "/(.*)", 
-            "dest": "src/server.js",
-            "methods": ["GET", "POST"],
-            "headers": {
-                "Access-Control-Allow-Origin": "*"
-            }
+            "dest": "/"
         }
     ]
 }
