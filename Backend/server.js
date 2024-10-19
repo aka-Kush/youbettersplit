@@ -4,7 +4,7 @@ const cors = require("cors");
 const app = express();
 app.use(cors(
   {
-    origin: ["https://youbettersplit-backend.vercel.app"],
+    origin: ["https://youbettersplit-backend.vercel.app/"],
     methods: ["POST", "GET"],
     credentials: true
   }
