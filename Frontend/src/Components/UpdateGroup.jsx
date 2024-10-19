@@ -1,0 +1,304 @@
+import React, { useState, useEffect } from 'react'
+
+const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
+
+    const [selectedOption, setSelectedOption] = useState();
+    const [names, setNames] = useState([]);
+    const [selectedSplitUsers, setSelectedSplitUsers] = useState({});
+    const [userPercentage, setUserPercentage] = useState({});
+    const [userAmount, setUserAmount] = useState({});
+    const [paidBy, setPaidBy] = useState("");
+    const [amount, setAmount] = useState("");
+    const [note, setNote] = useState("");    
+    const [map, setMap] = useState({});    
+    const [statementActive, setStatementActive] = useState(false);    
+    const [totalStatement, setTotalStatement] = useState({});    
+
+    useEffect(() => {
+        const fetchData = async() => {
+            const data = await fetch("http://localhost:8080/fetchExistingData", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({groupName: currentSelectedGroupName})
+            });
+            const res = await data.json();
+            res.data.members.forEach(member => setNames(prev => [...prev, member]))
+            setMap(res.data.balances);
+        }
+        fetchData();
+    },[currentSelectedGroupName])
+
+    const handleStatementActive = () => {
+        setStatementActive(true);
+        // console.log(totalStatement)
+        processStatements();
+    }
+
+    const handleStatementHidden = () => {
+        setStatementActive(false);
+    }
+
+
+    const handleSelectedSplitUsersChange = (name) => {
+        setSelectedSplitUsers((prev) => ({
+            ...prev,
+            [name]: !prev[name], // Toggle the checked state
+        }));
+    };
+
+    const handlePercentageChange = (name, value) => {
+        setUserPercentage((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleAmountChange = (name, value) => {
+        setUserAmount((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+        // add remaining amount functionality
+    };
+
+    const updateMap = (paidBy, split) => {
+        Object.keys(map).forEach(key => {
+            if(key == paidBy){
+                Object.keys(map[key]).forEach(s => {
+                    map[key][s] += split[s];
+                }) 
+            }
+        }) 
+    };
+
+    const finalPost = async(data) => {
+        const response = await fetch("http://localhost:8080/updateGroup", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+    }
+
+    const processStatements = () => {
+        let user = "Shivansh";
+        let total = {};
+        let filterNames = names.filter(key => key != user)
+        filterNames.forEach(name => total[name] = 0);
+        // console.log(total);
+        Object.keys(map).forEach(outer => {
+            if(outer == user){
+                Object.keys(map[outer]).forEach(key => {
+                    total[key] += map[outer][key];
+                })
+            } else{
+                // Object.keys(outer).forEach(inner => {
+                //     if(inner == user) total[outer] -= map[outer][inner];
+                // })
+                if (map[outer][user]) {
+                    total[outer] -= map[outer][user];
+                }
+            }
+        })
+        setTotalStatement(total);
+    }
+
+    function handleSubmit(e){
+        e.preventDefault();
+        switch(selectedOption){
+            case "equally": {
+                const splitAmount = amount/names.length;
+                const splitMemberArr = names.filter(e => e != `${paidBy}`);
+                const split = {};
+                splitMemberArr.forEach((member) => {
+                    split[member] = splitAmount;
+                })
+                updateMap(paidBy, split);
+                const data = {
+                    groupName: currentSelectedGroupName,
+                    members: names,
+                    transactions: {
+                        note,
+                        paidBy,
+                        amount,
+                        split
+                    },
+                    balances: map
+                }
+
+                finalPost(data);
+                break;
+            }
+            case "select": {
+                const selectedNames = [];
+                Object.keys(selectedSplitUsers).forEach(key => {
+                    if(selectedSplitUsers[key] == true) selectedNames.push(key)
+                });
+
+                const split = {};
+                const splitAmount = amount / selectedNames.length;
+                if(!selectedNames.includes(`${paidBy}`)){
+                    selectedNames.forEach(name => {
+                        split[name] = splitAmount;
+                    })
+                } else{
+                    selectedNames.forEach(name => {
+                        if(name != `${paidBy}`) split[name] = splitAmount;
+                    })
+                }
+                updateMap(paidBy, split);
+                const data = {
+                    groupName: currentSelectedGroupName,
+                    members: names,
+                    transactions: {
+                        note,
+                        paidBy,
+                        amount,
+                        split
+                    },
+                    balances: map
+                }
+
+                finalPost(data);
+                break;
+            }
+            case "amount": {
+                const split = {};
+                for(const key in userAmount){
+                    if(key != `${paidBy}`) split[key] = parseInt(userAmount[key]);
+                }
+                updateMap(paidBy, split);
+                const data = {
+                    groupName: currentSelectedGroupName,
+                    members: names,
+                    transactions: {
+                        note,
+                        paidBy,
+                        amount,
+                        split
+                    },
+                    balances: map
+                }
+
+                finalPost(data);
+                break;
+            }
+            case "percent": {
+                const split = {};
+                for(const key in userPercentage){
+                    if(key != paidBy){
+                        let value = userPercentage[key];
+                        let calc = parseInt((value * amount) / 100);
+                        split[key] = calc;
+                    }
+                }
+
+                updateMap(paidBy, split);
+                const data = {
+                    groupName: currentSelectedGroupName,
+                    members: names,
+                    transactions: {
+                        note,
+                        paidBy,
+                        amount,
+                        split
+                    },
+                    balances: map
+                }
+
+                finalPost(data);
+                break;
+            }
+        }
+    }
+
+        
+
+        
+
+  return (
+    <div className='newGroupForm fixed top-[25%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10'>
+        <nav className='w-full bg-slate-500 p-3 fixed top-0'>
+            <ul className='flex justify-between'>
+                <li className='cursor-pointer' onClick={handleStatementHidden}>Add</li>
+                <li className='cursor-pointer' onClick={handleStatementActive}>Statement</li>
+            </ul>
+        </nav>
+        <form action="" className='p-4 my-6 mx-4' style={{ display: !statementActive ? 'block' : 'none' }}>
+            {/* onChange={(e) => setGroupName(e.target.value)} */}
+            <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={currentSelectedGroupName} disabled/>
+            <input className="w-full p-3 mt-2" type="text" placeholder='Enter note' value={note} onChange={(e) => setNote(e.target.value)}/>
+            <input className="w-full p-3 mt-2" type="number" placeholder='Enter amount' value={amount} onChange={(e) => setAmount(e.target.value)}/>
+            <label className="" htmlFor="">Paid by</label>
+
+            <select className='m-4 p-2' name="" id="" value={paidBy} onChange={(e) => setPaidBy(e.target.value)} defaultValue={"Choose"}>
+            <option>Choose</option>
+            {names.map((name, idx) => (
+                <option value={name} key={idx}>{name}</option>
+            ))}
+            </select>
+
+            <br />
+            
+            <label htmlFor="">split</label>
+            <select className='m-4 p-2' name="" id="" value={selectedOption} onChange={(e) => setSelectedOption(e.target.value)} defaultValue={"Choose"}>
+                <option>Choose</option>
+                <option value="equally">equally</option>
+                <option value="select">select members to split</option>
+                <option value="percent">different percentage</option>
+                <option value="amount">different amount</option>
+            </select>
+
+            {selectedOption == "select" && (
+                names.map((name, index) => (
+                    <div key={index} className='m-4'>
+                        <label htmlFor={name}>{name}</label>
+                        <input className='m-2' type="checkbox" name={name} id={name} checked={selectedSplitUsers[name] || false}
+                        onChange={() => handleSelectedSplitUsersChange(name)}/>
+                    </div>
+                ))
+            )}
+
+            {selectedOption == "percent" &&(
+                names.map((name, index) => (
+                    <div key={index} className='m-4'>
+                        <label htmlFor={name}>{name}</label>
+                        <input className='w-full p-2' type="number" placeholder='Enter percentage..' name={name} id={name} value={userPercentage[name] || ""}
+                        onChange={(e) => handlePercentageChange(name, e.target.value)}/>
+                    </div>
+            ))
+            )}
+            
+            {selectedOption == "amount" &&(
+                names.map((name, index) => (
+                        <div key={index} className='m-4'>
+                            <label htmlFor={name}>{name}</label>
+                            <input className='p-2 w-full' type="number" placeholder='Enter amount..' name={name} id={name} value={userAmount[name] || ""}
+                            onChange={(e) => handleAmountChange(name, e.target.value)}/>
+                        </div>
+                    ))
+            )}
+            {/* <p>Remaining Value: <span id='remainAmount'></span></p> */}
+
+            <br />
+            
+            <button  className="border-2 bg-blue-400 p-4 mt-2" type='submit' onClick={(e) => handleSubmit(e)}>Submit</button>
+            <button  className='border-2 bg-red-400 p-4 mt-2' type='submit' onClick={onClose}>Close</button>
+        </form>
+        <div className='h-16 w-16' style={{ display: statementActive ? 'block' : 'none' }}>
+            <h3 className='mt-16 p-4 text-2xl'>Statements:</h3>
+            <ul id="statements-list">
+                {Object.keys(totalStatement).map(item => (
+                    <li className='pl-8 py-2 font-bold text-xl' key={item}>{item}:<span className='ml-2 text-green-700 text-xl'>{totalStatement[item]}</span></li>
+                ))}
+            </ul>
+            <button className='border-2 bg-red-400 p-4 mt-2' onClick={onClose}>Close</button>
+        </div>
+    </div>
+  )
+}
+
+export default UpdateGroup
