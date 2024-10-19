@@ -3,7 +3,7 @@ const router = express.Router();
 const Group = require("../Schemas/Group.jsx")
 
 router.post("/new-group", async(req, res) => {
-    const {groupName, members, balances} = await req.body;
+    const {groupName, members, balances} = req.body;
     const group = new Group({
         groupName,
         members,
@@ -69,7 +69,7 @@ router.post("/deleteTransaction", async(req, res) => {
 })
 
 router.post("/deleteGroup", async(req, res) => {
-    const {groupName} = await req.body;
+    const {groupName} = req.body;
     try{
         await Group.deleteOne({groupName});
         res.json({delete: success})
