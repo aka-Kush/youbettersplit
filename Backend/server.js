@@ -2,7 +2,11 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: ["https://youbettersplit-backend.vercel.app"],
+  methods: ["POST", "GET"],
+  credentials: true
+}));
 const mongoose = require("mongoose");
 const router = require("./Routes/Router.jsx");
 
