@@ -13,6 +13,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     const [map, setMap] = useState({});    
     const [statementActive, setStatementActive] = useState(false);    
     const [totalStatement, setTotalStatement] = useState({});    
+    const [completeData, setCompleteData] = useState({});    
 
     useEffect(() => {
         const fetchData = async() => {
@@ -24,15 +25,17 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                 body: JSON.stringify({groupName: currentSelectedGroupName})
             });
             const res = await data.json();
-            res.data.members.forEach(member => setNames(prev => [...prev, member]))
-            setMap(res.data.balances);
+            if (res.data) {
+                res.data.members.forEach(member => setNames(prev => [...prev, member]));
+                setMap(res.data.balances);
+                setCompleteData(res.data);
+            }
         }
         fetchData();
     },[currentSelectedGroupName])
 
     const handleStatementActive = () => {
-        setStatementActive(true);
-        // console.log(totalStatement)
+        setStatementActive(true);  
         processStatements();
     }
 
@@ -60,8 +63,20 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             ...prev,
             [name]: value,
         }));
-        // add remaining amount functionality
     };
+
+    const deleteTransaction = async(note, split, paidBy) => {
+        Object.keys(split).forEach(s => {
+            map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 
+        })
+        await fetch("https://youbettersplit.onrender.com/deleteTransaction", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({note})
+        });
+    }
 
     const updateMap = (paidBy, split) => {
         Object.keys(map).forEach(key => {
@@ -214,10 +229,6 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         onClose();
     }
 
-        
-
-        
-
   return (
     <div className='newGroupForm fixed overflow-auto top-[15%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10'>
         <nav className='w-full bg-slate-500 p-3 fixed top-0'>
@@ -226,8 +237,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                 <li className='cursor-pointer' onClick={handleStatementActive}>Statement</li>
             </ul>
         </nav>
-        <form action="" className='p-4 my-6 mx-4 h-24' style={{ display: !statementActive ? 'block' : 'none' }}>
-            {/* onChange={(e) => setGroupName(e.target.value)} */}
+        <form action="" className='p-4 my-6 mx-4 h-24 w-96' style={{ display: !statementActive ? 'block' : 'none' }}>
             <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={currentSelectedGroupName} disabled/>
             <input className="w-full p-3 mt-2" type="text" placeholder='Enter note' value={note} onChange={(e) => setNote(e.target.value)}/>
             <input className="w-full p-3 mt-2" type="number" placeholder='Enter amount' value={amount} onChange={(e) => setAmount(e.target.value)}/>
@@ -280,23 +290,34 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                         </div>
                     ))
             )}
-            {/* <p>Remaining Value: <span id='remainAmount'></span></p> */}
-
             <br />
-            
+        
             <div className='pb-10 w-full flex justify-between'>
             <button  className="border-2 bg-blue-400 p-4 mt-2" type='submit' onClick={(e) => handleSubmit(e)}>Submit</button>
             <button  className='border-2 bg-red-400 p-4 mt-2' type='submit' onClick={onClose}>Close</button>
             </div>
 
         </form>
-        <div className='' style={{ display: statementActive ? 'block' : 'none' }}>
+        <div className='h-24 w-96' style={{ display: statementActive ? 'block' : 'none' }}>
             <h3 className='mt-16 p-4 text-2xl'>Statements:</h3>
-            <ul id="statements-list">
-                {Object.keys(totalStatement).map(item => (
-                    <li className='pl-8 py-2 font-bold text-xl' key={item}>{item}:<span className='ml-2 text-green-700 text-xl'>{totalStatement[item]}</span></li>
-                ))}
-            </ul>
+            <div className='w-full flex flex-col items-center'>
+            {completeData.transactions && 
+                completeData.transactions.map((trans, index) => (
+                    <div key={index} className='w-[90%] p-3 bg-slate-400 border-slate-700 border-2 flex justify-between items-center'>
+                        <div>
+                            <h4>{trans.note}</h4>
+                            <span>{trans.paidBy}</span>
+                        </div>
+                        <div>
+                            {Object.keys(totalStatement).map(item => (
+                                <li className='list-none p-0 m-0' key={item}>{item}:<span className='text-green-700'>{totalStatement[item]}</span></li>
+                            ))}
+                        </div>
+                        <i className="fa-solid fa-trash" onClick={() => deleteTransaction(trans.note, trans.split, trans.paidBy)}></i>
+                    </div>
+                ))
+            }
+            </div>
             <div className='w-full flex justify-center mt-6'>
                 <button className='bg-red-400 p-4 mt-2' onClick={onClose}>Close</button>
             </div>
