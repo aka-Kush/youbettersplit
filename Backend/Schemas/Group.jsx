@@ -8,6 +8,10 @@ const transactionSchema = new mongoose.Schema({
     split: {
         type: Map,
         of: Number
+    },
+    date: {
+        type: Date,
+        default: Date.now
     }
 });
 
@@ -19,7 +23,7 @@ const groupSchema = new mongoose.Schema({
     balances: {
         type: Map,
         of: Map
-    }
+    },
 });
 
 const Group = mongoose.model("Group", groupSchema);
