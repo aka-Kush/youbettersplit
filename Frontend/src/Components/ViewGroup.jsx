@@ -88,7 +88,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({note, split, paidBy, amount, map})
+            body: JSON.stringify({note, split, paidBy, amount, map, currentSelectedGroupName})
         });
         let res = await data.json();
         console.log(res.data); 
