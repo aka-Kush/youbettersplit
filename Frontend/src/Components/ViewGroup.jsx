@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 const ViewGroup = ({onClose, currentSelectedGroupName}) => {
 
@@ -16,7 +16,6 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
       body: JSON.stringify({currentSelectedGroupName})
     })
     const res = await data.json();
-    console.log(res)
     if(res){
       setNames(data.data.members);
       setMap(data.data.balances);
@@ -43,7 +42,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
     setTotalStatement(total);
 }
 
-  useState(() => {
+  useEffect(() => {
     fetchData();
     processTotals();
   },[])

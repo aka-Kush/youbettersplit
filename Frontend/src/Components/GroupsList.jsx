@@ -21,7 +21,8 @@ const GroupsList = () => {
         fetchData();
     }, [isUpdateGroupVisible])
 
-    function viewGroup(){
+    function viewGroup(e){
+        setCurrentSelectedGroupName(e.target.parentElement.name)
         setToggleGroupViewVisibility(true);
     }
 
@@ -61,7 +62,7 @@ const GroupsList = () => {
                 <div className="border-2 bg-sky-300 w-full p-10 flex justify-between mt-2" key={index}>
                 <h2 className="text-2xl">{name}</h2>
                 <div>
-                <button className="mr-3" onClick={viewGroup}><i className="fa-solid fa-eye"></i></button>
+                <button name={name} className="mr-3" onClick={(e) => viewGroup(e)}><i className="fa-solid fa-eye"></i></button>
                 <button name={name} onClick={(e) => openUpdateGroup(e)}><i className="mx-3 fa-solid fa-pen-to-square"></i></button>
                 <button name={name} onClick={(e) => deleteGroup(e)}><i className="mx-3 fa-solid fa-trash"></i></button>
                 </div>
