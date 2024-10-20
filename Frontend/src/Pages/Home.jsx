@@ -14,7 +14,7 @@ const Home = () => {
   }
 
   return (
-    <div className="w-[80%] mt-6 m-auto flex flex-col items-center">
+    <div className="w-[80%] max-w-[80%] mt-6 m-auto flex flex-col items-center">
       <div className="mt-20 w-full flex justify-center">
         <div className="w-[40%] rounded-lg bg-green-300 text-lg">
           <button onClick={openDialog} className="p-4 w-full flex items-center justify-center">
