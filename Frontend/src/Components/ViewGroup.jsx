@@ -84,7 +84,6 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
     setReloadTrans(prev => !prev)
   }
 
-
     const deleteTransaction = async(note, split, paidBy, amount) => {
         Object.keys(split).forEach(s => {
             map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 

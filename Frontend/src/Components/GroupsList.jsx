@@ -6,7 +6,6 @@ const GroupsList = () => {
     const [groupName, setGroupName] = useState([]);
     const [isUpdateGroupVisible, setIsUpdateGroupVisible] = useState(false);
     const [currentSelectedGroupName, setCurrentSelectedGroupName] = useState(null);
-    const [clicked, setClicked] = useState(false);
     const [toggleGroupViewVisibility, setToggleGroupViewVisibility] = useState(false);
 
     const fetchData  = async() => {
@@ -35,13 +34,11 @@ const GroupsList = () => {
         setIsUpdateGroupVisible(true);
     }
 
-    function handleReload(){
-        fetchData();
-        setClicked(prev => !prev);
-    }
-
     const deleteGroup = async(e) => {
         const groupName = e.target.parentElement.name;
+        setGroupName(prevGroupNames => 
+            prevGroupNames.filter(name => name !== (e.target.parentElement.name))
+        ); 
             await fetch("https://youbettersplit.onrender.com/deleteGroup",{
                 method: "POST",
                 headers: {
@@ -49,7 +46,6 @@ const GroupsList = () => {
                 },
                 body: JSON.stringify({groupName})
             })
-        handleReload();
     }
 
     function closeUpdateGroup(){
@@ -57,9 +53,9 @@ const GroupsList = () => {
     }
 
     return(
-        <div className="" onClick={handleReload} >
+        <div className="">
             {groupName.map((name, index) => (
-                <div name={clicked} className="bg-sky-300 w-full p-10 flex justify-between mt-2 rounded-md" key={index}>
+                <div className="bg-sky-300 w-full p-10 flex justify-between mt-2 rounded-md" key={index}>
                 <h2 className="text-2xl">{name}</h2>
                 <div>
                 <button name={name} className="mr-3" onClick={(e) => viewGroup(e)}><i className="fa-solid fa-eye"></i></button>
