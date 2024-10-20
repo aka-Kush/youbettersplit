@@ -36,7 +36,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
   }
 
   function dateFormat(date){
-    const formattedData = format(new Date(date), 'd MMMM yyyy, h:mm a');
+    const formattedData = format(new Date(date), 'dd MMM, h:mm a');
     return formattedData
   }
 
@@ -161,9 +161,10 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
             {completeData.transactions && 
                 completeData.transactions.map((trans, index) => (
                     <div key={index} className='w-[90%] p-3 bg-slate-300 rounded-md flex justify-between items-center my-2'>
-                        <div>
-                            <h4 className='text-lg'>{trans.note} <span>{dateFormat(trans.data)}</span></h4>
+                        <div className='flex flex-col'>
+                            <h4 className='text-lg'>{trans.note}</h4>
                             <span className='text-sm'>{trans.paidBy}</span>
+                            <span className='text-sm'>{dateFormat(trans.date)}</span>
                         </div>
                         <div>
                             {Object.keys(trans.split).map((item, idx) => (
