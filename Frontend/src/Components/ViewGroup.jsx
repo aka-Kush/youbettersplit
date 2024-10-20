@@ -83,15 +83,24 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
         Object.keys(split).forEach(s => {
             map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 
         })
+        const critera = {
+          note: note,
+          split: split,
+          paidBy: paidBy,
+          amount: amount
+        }
+        console.log(critera, map, currentSelectedGroupName)
         const data = await fetch("https://youbettersplit.onrender.com/deleteTransaction", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({note, split, paidBy, amount, map, currentSelectedGroupName})
+            body: JSON.stringify({critera, map, currentSelectedGroupName})
         });
-        let res = await data.json();
-        console.log(res.data); 
+        let res = await data.json(); 
+        console.log(res.data);
+        setMap(res.data.balances);
+        setCompleteData(res.data);
     }
 
   return (
