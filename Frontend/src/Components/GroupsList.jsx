@@ -59,7 +59,7 @@ const GroupsList = () => {
     return(
         <div className="" onClick={handleReload} >
             {groupName.map((name, index) => (
-                <div className="border-2 bg-sky-300 w-full p-10 flex justify-between mt-2" key={index}>
+                <div className="bg-sky-300 w-full p-10 flex justify-between mt-2 rounded-md" key={index}>
                 <h2 className="text-2xl">{name}</h2>
                 <div>
                 <button name={name} className="mr-3" onClick={(e) => viewGroup(e)}><i className="fa-solid fa-eye"></i></button>

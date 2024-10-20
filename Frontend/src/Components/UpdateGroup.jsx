@@ -12,8 +12,8 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     const [note, setNote] = useState("");    
     const [map, setMap] = useState({});    
     const [statementActive, setStatementActive] = useState(false);    
-    const [totalStatement, setTotalStatement] = useState({});    
-    const [completeData, setCompleteData] = useState({});    
+    const [completeData, setCompleteData] = useState({});   
+    const [loading, setLoading] = useState(true);   
 
 
     const fetchData = async() => {
@@ -39,9 +39,12 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     },[])
 
     const handleStatementActive = () => {
-        fetchData();
-        setStatementActive(true);  
-        processStatements();
+        try{
+            fetchData();
+            setStatementActive(true);  
+        } finally{
+            setLoading(false);
+        }
     }
 
     const handleStatementHidden = () => {
@@ -72,6 +75,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     };
 
     const deleteTransaction = async(note, split, paidBy, amount) => {
+        console.log(note, split, paidBy, amount)
         Object.keys(split).forEach(s => {
             map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 
         })
@@ -80,7 +84,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({note, split, paidBy, amount})
+            body: JSON.stringify({note, split, paidBy, amount, map})
         });
         fetchData();
     }
@@ -105,30 +109,30 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         })
     }
 
-    const processStatements = () => {
-        let user = "Shivansh";
-        let total = {};
-        let filterNames = names.filter(key => key != user)
-        filterNames.forEach(name => total[name] = 0);
-        Object.keys(map).forEach(outer => {
-            if(outer == user){
-                Object.keys(map[outer]).forEach(key => {
-                    total[key]  = Math.round(total[key] + map[outer][key]);
-                })
-            } else{
-                if (map[outer][user]) {
-                    total[outer] = Math.round(total[outer] - map[outer][user]);
-                }
-            }
-        })
-        setTotalStatement(total);
-    }
+    // const processStatements = () => {
+    //     let user = "Shivansh";
+    //     let total = {};
+    //     let filterNames = names.filter(key => key != user)
+    //     filterNames.forEach(name => total[name] = 0);
+    //     Object.keys(map).forEach(outer => {
+    //         if(outer == user){
+    //             Object.keys(map[outer]).forEach(key => {
+    //                 total[key]  = Math.round(total[key] + map[outer][key]);
+    //             })
+    //         } else{
+    //             if (map[outer][user]) {
+    //                 total[outer] = Math.round(total[outer] - map[outer][user]);
+    //             }
+    //         }
+    //     })
+    //     setTotalStatement(total);
+    // }
 
     function handleSubmit(e){
         e.preventDefault();
         switch(selectedOption){
             case "equally": {
-                const splitAmount = amount/names.length;
+                const splitAmount = parseInt(amount/names.length);
                 console.log("splitAmount: ", splitAmount);
                 const splitMemberArr = names.filter(e => e != `${paidBy}`);
                 const split = {};
@@ -237,7 +241,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     }
 
   return (
-    <div className='newGroupForm fixed overflow-auto top-[15%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden'>
+    <div className='newGroupForm fixed overflow-auto top-[10%] left-2/4  min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden rounded-md'>
         <style>
             {`
                 .scroll-hidden {
@@ -254,8 +258,9 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                 <li className='cursor-pointer' onClick={handleStatementActive}>Statement</li>
             </ul>
         </nav>
-        <form action="" className='p-4 mx-4 h-24 w-96' style={{ display: !statementActive ? 'block' : 'none' }}>
-            <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={currentSelectedGroupName} disabled/>
+        <form action="" className='p-4 mx-4 w-96' style={{ display: !statementActive ? 'block' : 'none' }}>
+            {/* <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={currentSelectedGroupName} disabled/> */}
+            <h1 className='p-3 mt-2 text-center text-2xl'>{currentSelectedGroupName}</h1>
             <input className="w-full p-3 mt-2" type="text" placeholder='Enter note' value={note} onChange={(e) => setNote(e.target.value)}/>
             <input className="w-full p-3 mt-2" type="number" placeholder='Enter amount' value={amount} onChange={(e) => setAmount(e.target.value)}/>
             <label className="" htmlFor="">Paid by</label>
@@ -315,15 +320,17 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             </div>
 
         </form>
-        <div className='h-24 w-96' style={{ display: statementActive ? 'block' : 'none' }}>
+        <div className='w-96' style={{ display: statementActive ? 'block' : 'none' }}>
+        {loading ? (<p>Loading...</p>) : (
+            <>
             <h3 className='mt-4 p-4 text-2xl'>Statements:</h3>
             <div className='w-full flex flex-col items-center'>
             {completeData.transactions && 
                 completeData.transactions.map((trans, index) => (
-                    <div key={index} className='w-[90%] p-3 bg-slate-400 border-slate-700 border-2 flex justify-between items-center'>
+                    <div key={index} className='w-[90%] p-3 bg-slate-300 rounded-md flex justify-between items-center my-2'>
                         <div>
-                            <h4>{trans.note}</h4>
-                            <span>{trans.paidBy}</span>
+                            <h4 className='text-lg'>{trans.note}</h4>
+                            <span className='text-sm'>{trans.paidBy}</span>
                         </div>
                         <div>
                             {Object.keys(trans.split).map((item, idx) => (
@@ -335,9 +342,11 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                 ))
             }
             </div>
-            <div className='w-full flex justify-center mt-6'>
+            <div className='w-full flex justify-center my-6'>
                 <button className='bg-red-400 p-4 mt-2' onClick={onClose}>Close</button>
             </div>
+            </>
+        )}
         </div>
     </div>
   )

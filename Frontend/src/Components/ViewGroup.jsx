@@ -5,7 +5,8 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
   const [names, setNames] = useState([]);
   const [map, setMap] = useState({});
   const [totalStatement, setTotalStatement] = useState({});    
-  const [completeData, setCompleteData] = useState({});    
+  const [completeData, setCompleteData] = useState({});   
+  const [loading, setLoading] = useState(true);   
 
   const fetchData = async() => {
     const data = await fetch("https://youbettersplit.onrender.com/fetchExistingData", {
@@ -13,13 +14,19 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
       headers: {
           'Content-Type': 'application/json'
       },
-      body: JSON.stringify({currentSelectedGroupName})
+      body: JSON.stringify({groupName: currentSelectedGroupName})
     })
     const res = await data.json();
-    if(res){
-      setNames(data.data.members);
-      setMap(data.data.balances);
-      setCompleteData(data.data);
+    try{
+      if(res){
+        setNames(res.data.members);
+        setMap(res.data.balances);
+        setCompleteData(res.data);
+      } 
+    } catch(e){
+      console.log("error", e)
+    } finally {
+      setLoading(false); // Set loading to false after fetching data
     }
   }
 
@@ -44,11 +51,16 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
 
   useEffect(() => {
     fetchData();
-    processTotals();
-  },[])
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      processTotals();
+    }
+  }, [loading, names, map]);
 
   return (
-    <div className='newGroupForm fixed overflow-auto top-[15%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden'>
+    <div className='fixed overflow-auto top-[10%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden p-4 border-2 border-red-300 rounded-lg'>
       <style>
             {`
                 .scroll-hidden {
@@ -60,27 +72,35 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
             `}
       </style>
 
-      <div className='flex flex-col items-center'>
-        <h3>{completeData.groupName}</h3>
-        <ul>
+      <div className=''>
+        {loading ? (<p>Loading...</p>) : (
+          <>
+        <h3 className='text-2xl font-semibold mt-4 text-center'>{completeData.groupName}</h3>
+        <div className='bg-red-400 mt-4 text-center flex flex-col items-center'>
+        <label htmlFor="" className='mt-2'>Members:</label>
+        <ul className='flex my-2'>
         {names.map((name, idx) => (
           <div key={idx}>
-          <li>Member1</li>
-          <li>Member1</li>
-          <li>Member1</li>
+            <li className='mx-2'>{name}</li>
           </div>
         ))}
         </ul>
+        </div>
         
+        <h4 className='text-xl mt-4 mb-2'>Total Balance: </h4>
+
         {Object.keys(totalStatement).map((key, idx) => (
           <div key={idx}>
-            <p>{key}: <span>totalStatement[key]</span></p>
+            <p>{key}: <span>{totalStatement[key]}</span></p>
           </div>
         ))}
+      </>
+      )}
 
       </div>
-      
-      <button className='bg-red-400 p-4 mt-2' onClick={onClose}>Close</button>
+      <div className='w-full flex justify-center mt-8'>
+        <button className='bg-red-400 p-4 mt-2' onClick={onClose}>Close</button>
+      </div>
     </div>
   )
 }
