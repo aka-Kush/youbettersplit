@@ -47,14 +47,14 @@ router.post("/updateGroup", async(req, res) => {
 router.post("/deleteTransaction", async(req, res) => {
     const {criteria, map, currentSelectedGroupName} = req.body;
     try{
-        const {_id} = await Group.findOne({ 
-            groupName: currentSelectedGroupName
-        });
-        await Group.updateOne(
-            { _id },
-            { $set: { balances: map }},
+        await Group.findOneAndUpdate(
+            { groupName: currentSelectedGroupName },
             { $pull: { transactions: criteria}}
         );
+        await Group.findOneAndUpdate(
+            {groupName: currentSelectedGroupName},
+            { $set: { balances: map }}
+        )
         const data = await Group.findOne({groupName: currentSelectedGroupName});
         res.json({data});
     } catch(e){

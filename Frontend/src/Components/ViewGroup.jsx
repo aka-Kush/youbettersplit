@@ -36,19 +36,20 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
   const processTotals = () => {
     let user = "Shivansh";
     let total = {};
-    let filterNames = names.filter(key => key != user)
-    filterNames.forEach(name => total[name] = 0);
-    Object.keys(map).forEach(outer => {
-        if(outer == user){
-            Object.keys(map[outer]).forEach(key => {
-                total[key]  = Math.round(total[key] + map[outer][key]);
-            })
-        } else{
-            if (map[outer][user]) {
-                total[outer] = Math.round(total[outer] - map[outer][user]);
-            }
+
+    for(const p in map){
+      if(p !== user) total[p] = 0
+    }
+
+    for(const payer in map){
+      if(payer === user){
+        for(const reciever in map[user]){
+          total[reciever] = Math.round(total[reciever] + map[payer][reciever])
         }
-    })
+      } else{
+        if(map[payer][user]) total[payer] = Math.round(total[payer] - map[payer][user])
+      }
+    }
     setTotalStatement(total);
 }
 
