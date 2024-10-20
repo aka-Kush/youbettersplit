@@ -11,9 +11,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     const [amount, setAmount] = useState("");
     const [note, setNote] = useState("");    
     const [map, setMap] = useState({});    
-    const [statementActive, setStatementActive] = useState(false);    
     const [completeData, setCompleteData] = useState({});   
-    const [loading, setLoading] = useState(true);   
 
 
     const fetchData = async() => {
@@ -38,20 +36,6 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         fetchData();
     },[])
 
-    const handleStatementActive = () => {
-        try{
-            fetchData();
-            setStatementActive(true);  
-        } finally{
-            setLoading(false);
-        }
-    }
-
-    const handleStatementHidden = () => {
-        fetchData();
-        setStatementActive(false);
-    }
-
 
     const handleSelectedSplitUsersChange = (name) => {
         setSelectedSplitUsers((prev) => ({
@@ -73,21 +57,6 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             [name]: value,
         }));
     };
-
-    const deleteTransaction = async(note, split, paidBy, amount) => {
-        console.log(note, split, paidBy, amount)
-        Object.keys(split).forEach(s => {
-            map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 
-        })
-        await fetch("https://youbettersplit.onrender.com/deleteTransaction", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({note, split, paidBy, amount, map})
-        });
-        fetchData();
-    }
 
     const updateMap = (paidBy, split) => {
         Object.keys(map).forEach(key => {
@@ -241,7 +210,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     }
 
   return (
-    <div className='newGroupForm fixed overflow-auto top-[10%] left-2/4  min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden rounded-md'>
+    <div className='newGroupForm fixed overflow-auto top-[15%] left-2/4  min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden rounded-md'>
         <style>
             {`
                 .scroll-hidden {
@@ -252,17 +221,17 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                 }
             `}
         </style>
-        <nav className='w-full bg-slate-500 p-3 sticky top-0'>
+        {/* <nav className='w-full bg-slate-500 p-3 sticky top-0'>
             <ul className='flex justify-between'>
                 <li className='cursor-pointer' onClick={handleStatementHidden}>Add</li>
                 <li className='cursor-pointer' onClick={handleStatementActive}>Statement</li>
             </ul>
-        </nav>
-        <form action="" className='p-4 mx-4 w-96' style={{ display: !statementActive ? 'block' : 'none' }}>
+        </nav> */}
+        <form action="" className='p-4 mx-4 w-96'>
             {/* <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={currentSelectedGroupName} disabled/> */}
             <h1 className='p-3 mt-2 text-center text-2xl'>{currentSelectedGroupName}</h1>
-            <input className="w-full p-3 mt-2" type="text" placeholder='Enter note' value={note} onChange={(e) => setNote(e.target.value)}/>
-            <input className="w-full p-3 mt-2" type="number" placeholder='Enter amount' value={amount} onChange={(e) => setAmount(e.target.value)}/>
+            <input required className="w-full p-3 mt-2" type="text" placeholder='Enter note' value={note} onChange={(e) => setNote(e.target.value)}/>
+            <input required className="w-full p-3 mt-2" type="number" placeholder='Enter amount' value={amount} onChange={(e) => setAmount(e.target.value)}/>
             <label className="" htmlFor="">Paid by</label>
 
             <select className='m-4 p-2' name="" id="" value={paidBy} onChange={(e) => setPaidBy(e.target.value)} defaultValue={"Choose"}>
@@ -320,34 +289,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
             </div>
 
         </form>
-        <div className='w-96' style={{ display: statementActive ? 'block' : 'none' }}>
-        {loading ? (<p>Loading...</p>) : (
-            <>
-            <h3 className='mt-4 p-4 text-2xl'>Statements:</h3>
-            <div className='w-full flex flex-col items-center'>
-            {completeData.transactions && 
-                completeData.transactions.map((trans, index) => (
-                    <div key={index} className='w-[90%] p-3 bg-slate-300 rounded-md flex justify-between items-center my-2'>
-                        <div>
-                            <h4 className='text-lg'>{trans.note}</h4>
-                            <span className='text-sm'>{trans.paidBy}</span>
-                        </div>
-                        <div>
-                            {Object.keys(trans.split).map((item, idx) => (
-                                <li className='list-none p-0 m-0' key={idx}>{item}:<span className='text-green-700 ml-2'>{trans.split[item]}</span></li>
-                            ))}
-                        </div>
-                        <i className="fa-solid fa-trash cursor-pointer" onClick={() => deleteTransaction(trans.note, trans.split, trans.paidBy, trans.amount)}></i>
-                    </div>
-                ))
-            }
-            </div>
-            <div className='w-full flex justify-center my-6'>
-                <button className='bg-red-400 p-4 mt-2' onClick={onClose}>Close</button>
-            </div>
-            </>
-        )}
-        </div>
+        
     </div>
   )
 }

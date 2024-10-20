@@ -43,11 +43,11 @@ const NewGroup = ({onClose}) => {
 
     <div className="newGroupForm fixed top-[25%] left-2/4 w-fit bg-slate-200 p-4 @apply -translate-x-2/4 -translate-y-2/4; z-10">
     <form action="">
-      <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={groupName} onChange={(e) => {setGroupName(e.target.value)}}/>
-      <input type="number" min={0} className="w-full p-3 mt-2" placeholder="Enter number of members" onChange={handleChange} value={numDivs}/>
+      <input  required className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={groupName} onChange={(e) => {setGroupName(e.target.value)}}/>
+      <input required type="number" min={0} className="w-full p-3 mt-2" placeholder="Enter number of members" onChange={handleChange} value={numDivs}/>
       <div className="mt-4">
         {Array.from({ length: numDivs }, (_, index) => (
-          <input key={index} id={`nameInput${index+1}`} className="p-3 mt-2 w-full" placeholder={`Enter name of person ${index+1}`}>
+          <input key={index} id={`nameInput${index+1}`} className="p-3 mt-2 w-full" placeholder={`Enter name of person ${index+1}`} required>
           </input>
         ))}
       </div>

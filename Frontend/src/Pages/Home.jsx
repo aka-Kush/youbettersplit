@@ -24,7 +24,7 @@ const Home = () => {
         </div>
       </div>
       {isDialogVisible && <NewGroup onClose={closeDialog}/>}
-      <div className="mt-10 w-[50%]">
+      <div className="mt-10 w-full">
         <GroupsList/>
       </div>
     </div>

@@ -63,7 +63,8 @@ router.post("/deleteTransaction", async(req, res) => {
                 amount: amount 
             }}}
         );
-        res.json({delete: true});
+        const data = await Group.find({});
+        res.json({data});
     } catch(e){
         res.json({delete: false, error: e});
     }
