@@ -78,25 +78,6 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
         })
     }
 
-    // const processStatements = () => {
-    //     let user = "Shivansh";
-    //     let total = {};
-    //     let filterNames = names.filter(key => key != user)
-    //     filterNames.forEach(name => total[name] = 0);
-    //     Object.keys(map).forEach(outer => {
-    //         if(outer == user){
-    //             Object.keys(map[outer]).forEach(key => {
-    //                 total[key]  = Math.round(total[key] + map[outer][key]);
-    //             })
-    //         } else{
-    //             if (map[outer][user]) {
-    //                 total[outer] = Math.round(total[outer] - map[outer][user]);
-    //             }
-    //         }
-    //     })
-    //     setTotalStatement(total);
-    // }
-
     function handleSubmit(e){
         e.preventDefault();
         switch(selectedOption){

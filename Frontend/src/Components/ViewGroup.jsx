@@ -9,7 +9,8 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
   const [loading, setLoading] = useState(true);   
   const [statLoading, setStatLoading] = useState(true);   
   const [statementActive, setStatementActive] = useState(false);    
-  const [balanceDivActive, setBalanceDivActive] = useState(true);    
+  const [balanceDivActive, setBalanceDivActive] = useState(true);   
+  const [reloadTrans, setReloadTrans] = useState(false); 
 
   const fetchData = async() => {
     const data = await fetch("https://youbettersplit.onrender.com/fetchExistingData", {
@@ -79,29 +80,26 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
       setBalanceDivActive(true);
   }
 
+  function ReloadTrans(){
+    setReloadTrans(prev => !prev)
+  }
+
 
     const deleteTransaction = async(note, split, paidBy, amount) => {
         Object.keys(split).forEach(s => {
             map[paidBy][s] = Math.round(map[paidBy][s] - split[s]) 
         })
-        const critera = {
-          note: note,
-          split: split,
-          paidBy: paidBy,
-          amount: amount
-        }
-        console.log(critera, map, currentSelectedGroupName)
         const data = await fetch("https://youbettersplit.onrender.com/deleteTransaction", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({critera, map, currentSelectedGroupName})
+            body: JSON.stringify({note, split, paidBy, amount, map, currentSelectedGroupName})
         });
         let res = await data.json(); 
-        console.log(res.data);
         setMap(res.data.balances);
         setCompleteData(res.data);
+        ReloadTrans();
     }
 
   return (
@@ -150,7 +148,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
       </div>
 
 
-      <div className='w-96' style={{ display: statementActive ? 'block' : 'none' }}>
+      <div className='w-96' onClick={ReloadTrans} style={{ display: statementActive ? 'block' : 'none' }}>
         {statLoading ? (<p>Loading...</p>) : (
             <div>
             <h3 className='mt-4 p-4 text-2xl'>Statements:</h3>
