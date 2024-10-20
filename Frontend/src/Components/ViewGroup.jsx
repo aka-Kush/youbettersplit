@@ -38,8 +38,8 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
     let user = "Shivansh";
     let total = {};
 
-    for(const p in map){
-      if(p !== user) total[p] = 0
+    for(const payer in map){
+      if(payer !== user) total[payer] = 0
     }
 
     for(const payer in map){
@@ -122,7 +122,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
         <div className='bg-red-400 mt-4 text-center flex flex-col items-center'>
         <label htmlFor="" className='mt-2'>Members:</label>
         <ul className='flex my-2'>
-        {names.map((name, idx) => (
+        {names.filter(name => name != "Shivansh").map((name, idx) => (
           <div key={idx}>
             <li className='mx-2'>{name}</li>
           </div>
