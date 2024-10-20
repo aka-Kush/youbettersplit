@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import {format} from 'date-fns'
 
 const ViewGroup = ({onClose, currentSelectedGroupName}) => {
 
@@ -32,6 +33,11 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
     } finally {
       setLoading(false);
     }
+  }
+
+  function dateFormat(date){
+    const formattedData = format(new Date(date), 'd MMMM yyyy, h:mm a');
+    return formattedData
   }
 
   const processTotals = () => {
@@ -156,7 +162,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
                 completeData.transactions.map((trans, index) => (
                     <div key={index} className='w-[90%] p-3 bg-slate-300 rounded-md flex justify-between items-center my-2'>
                         <div>
-                            <h4 className='text-lg'>{trans.note}</h4>
+                            <h4 className='text-lg'>{trans.note} <span>{dateFormat(trans.data)}</span></h4>
                             <span className='text-sm'>{trans.paidBy}</span>
                         </div>
                         <div>
