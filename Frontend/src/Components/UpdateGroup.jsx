@@ -191,7 +191,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
     }
 
   return (
-    <div className='newGroupForm fixed overflow-auto top-[15%] left-2/4  min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden rounded-md'>
+    <div className='newGroupForm fixed top-[15%] left-2/4  w-[90%] h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden p-4 border-2 border-red-300 rounded-lg'>
         <style>
             {`
                 .scroll-hidden {
@@ -208,7 +208,7 @@ const UpdateGroup = ({onClose, currentSelectedGroupName}) => {
                 <li className='cursor-pointer' onClick={handleStatementActive}>Statement</li>
             </ul>
         </nav> */}
-        <form action="" className='p-4 mx-4 w-96'>
+        <form action="" className='p-4'>
             {/* <input className="w-full p-3 mt-2" type="text" placeholder="Enter group name" value={currentSelectedGroupName} disabled/> */}
             <h1 className='p-3 mt-2 text-center text-2xl'>{currentSelectedGroupName}</h1>
             <input required className="w-full p-3 mt-2" type="text" placeholder='Enter note' value={note} onChange={(e) => setNote(e.target.value)}/>

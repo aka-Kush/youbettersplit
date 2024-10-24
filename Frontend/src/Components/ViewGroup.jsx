@@ -108,7 +108,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
     }
 
   return (
-    <div className='fixed overflow-auto top-[10%] left-2/4 min-w-[300px] min-h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden p-4 border-2 border-red-300 rounded-lg'>
+    <div className='fixed overflow-auto top-[10%] left-2/4 w-[90%] h-[450px] bg-slate-200 @apply -translate-x-2/4 -translate-y-2/4; z-10 overflow-y-scroll scroll-hidden p-2 border-2 border-red-300 rounded-lg'>
       <style>
             {`
                 .scroll-hidden {
@@ -120,7 +120,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
             `}
       </style>
 
-        <div style={{ display: balanceDivActive ? 'block' : 'none' }}>
+        <div className='mx-3' style={{ display: balanceDivActive ? 'block' : 'none' }}>
         {loading ? (<p>Loading...</p>) : (
         <>
         <h3 className='text-2xl font-semibold mt-4 text-center'>{completeData.groupName}</h3>
@@ -144,8 +144,8 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
         ))}
 
       <div className='w-full flex justify-center mt-8 flex-col'>
-        <button className='bg-blue-400 p-4 mt-2' onClick={handleStatementActive}>View Statements</button>
-        <button className='bg-red-400 p-4 mt-2 mx-1' onClick={onClose}>Close</button>
+        <button className='bg-blue-400 p-4 mt-2 ' onClick={handleStatementActive}>View Statements</button>
+        <button className='bg-red-400 p-4 mt-2 ' onClick={onClose}>Close</button>
       </div>
 
     </>
@@ -153,7 +153,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
       </div>
 
 
-      <div className='w-96' onClick={ReloadTrans} style={{ display: statementActive ? 'block' : 'none' }}>
+      <div className='w-80 h-72' onClick={ReloadTrans} style={{ display: statementActive ? 'block' : 'none' }}>
         {statLoading ? (<p>Loading...</p>) : (
             <div>
             <h3 className='mt-4 p-4 text-2xl'>Statements:</h3>
@@ -161,7 +161,7 @@ const ViewGroup = ({onClose, currentSelectedGroupName}) => {
             {completeData.transactions && 
                 completeData.transactions.map((trans, index) => (
                     <div key={index} className='w-[90%] p-3 bg-slate-300 rounded-md flex justify-between items-center my-2'>
-                        <div className='flex flex-col'>
+                        <div className='flex flex-col w-[40%] overflow-hidden'>
                             <h4 className='text-lg'>{trans.note}</h4>
                             <span className='text-sm'>{trans.paidBy}</span>
                             <span className='text-sm'>{dateFormat(trans.date)}</span>
